@@ -1,5 +1,9 @@
 package com.bobocode;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * {@link LinkedList} is a list implementation that is based on singly linked generic nodes. A node is implemented as
  * inner static class {@link Node<E>}.
@@ -7,6 +11,9 @@ package com.bobocode;
  * @param <E> generic type parameter
  */
 public class LinkedList<E> implements List<E> {
+    private Node<E> head;
+    private Node<E> tail;
+    private int size;
 
     /**
      * This method creates a list of provided elements
@@ -15,8 +22,12 @@ public class LinkedList<E> implements List<E> {
      * @param <E>      generic type
      * @return a new list of elements the were passed as method parameters
      */
+    @SafeVarargs
     public static <E> List<E> of(E... elements) {
-        throw new UnsupportedOperationException("This method is not implemented yet"); // todo: implement this method
+        LinkedList<E> list = new LinkedList<>();
+        Arrays.stream(elements).forEach(list::add);
+
+        return list;
     }
 
     /**
@@ -26,7 +37,7 @@ public class LinkedList<E> implements List<E> {
      */
     @Override
     public void add(E element) {
-        throw new UnsupportedOperationException("This method is not implemented yet"); // todo: implement this method
+        add(size, element);
     }
 
     /**
@@ -38,7 +49,27 @@ public class LinkedList<E> implements List<E> {
      */
     @Override
     public void add(int index, E element) {
-        throw new UnsupportedOperationException("This method is not implemented yet"); // todo: implement this method
+        Node<E> node = Node.valueOf(element);
+        if (index == 0) {
+            node.setNext(head);
+            head = node;
+            if (head.getNext() == null) {
+                tail = head;
+            }
+        } else if (index == size) {
+            tail.setNext(node);
+            tail = node;
+        } else {
+            ArrayList<Node<E>> list = new ArrayList<>();
+            Node<E> current = head;
+            for (int i = 0; i < index; i++) {
+                current = current.getNext();
+                list.add(current);
+            }
+            node.setNext(current);
+            list.get(index - 2).setNext(node);
+        }
+        size++;
     }
 
     /**
@@ -50,7 +81,11 @@ public class LinkedList<E> implements List<E> {
      */
     @Override
     public void set(int index, E element) {
-        throw new UnsupportedOperationException("This method is not implemented yet"); // todo: implement this method
+        Node<E> current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.getNext();
+        }
+        current.setElement(element);
     }
 
     /**
@@ -62,7 +97,12 @@ public class LinkedList<E> implements List<E> {
      */
     @Override
     public E get(int index) {
-        throw new UnsupportedOperationException("This method is not implemented yet"); // todo: implement this method
+        Node<E> current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.getNext();
+        }
+
+        return current.getElement();
     }
 
     /**
@@ -73,8 +113,7 @@ public class LinkedList<E> implements List<E> {
      */
     @Override
     public E getFirst() {
-        throw new UnsupportedOperationException("This method is not implemented yet"); // todo: implement this method
-
+        return head.getElement();
     }
 
     /**
@@ -85,7 +124,11 @@ public class LinkedList<E> implements List<E> {
      */
     @Override
     public E getLast() {
-        throw new UnsupportedOperationException("This method is not implemented yet"); // todo: implement this method
+        if (tail != null) {
+            return tail.getElement();
+        } else {
+            return head.getElement();
+        }
     }
 
     /**
@@ -93,11 +136,18 @@ public class LinkedList<E> implements List<E> {
      * throws {@link IndexOutOfBoundsException}
      *
      * @param index element index
-     * @return an element value
      */
     @Override
     public void remove(int index) {
-        throw new UnsupportedOperationException("This method is not implemented yet"); // todo: implement this method
+        Objects.checkIndex(index, size);
+        ArrayList<Node<E>> list = new ArrayList<>();
+        Node<E> current = head;
+        for (int i = 0; i <= index; i++) {
+            current = current.getNext();
+            list.add(current);
+        }
+        list.get(index - 2).setNext(list.get(index));
+        size--;
     }
 
 
@@ -108,7 +158,18 @@ public class LinkedList<E> implements List<E> {
      */
     @Override
     public boolean contains(E element) {
-        throw new UnsupportedOperationException("This method is not implemented yet"); // todo: implement this method
+        if (head.getElement().equals(element)) {
+            return true;
+        } else {
+            Node<E> current = head;
+            for (int i = 0; i < size; i++) {
+                current = current.getNext();
+                if (current != null && current.getElement().equals(element)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -118,7 +179,7 @@ public class LinkedList<E> implements List<E> {
      */
     @Override
     public boolean isEmpty() {
-        throw new UnsupportedOperationException("This method is not implemented yet"); // todo: implement this method
+        return size == 0;
     }
 
     /**
@@ -128,7 +189,7 @@ public class LinkedList<E> implements List<E> {
      */
     @Override
     public int size() {
-        throw new UnsupportedOperationException("This method is not implemented yet"); // todo: implement this method
+        return size;
     }
 
     /**
@@ -136,6 +197,8 @@ public class LinkedList<E> implements List<E> {
      */
     @Override
     public void clear() {
-        throw new UnsupportedOperationException("This method is not implemented yet"); // todo: implement this method
+        head = null;
+        tail = null;
+        size = 0;
     }
 }
